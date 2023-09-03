@@ -1,0 +1,35 @@
+version: '3'
+
+x-lib: &lib
+  build:
+    context: .
+    dockerfile: ./.devcontainer/Dockerfile
+    args:
+      RUBY_VERSION: '3.2.1'
+  image: phlex_ext:1.0.0
+  stdin_open: true
+  tty: true
+  environment: &lib_environment
+    MALLOC_ARENA_MAX: 2
+    XDG_DATA_HOME: /app/tmp/caches
+    HISTFILE: /usr/local/hist/.bash_history
+    IRB_HISTFILE: /usr/local/hist/.irb_history
+    EDITOR: nano
+  volumes:
+    - .:/app:cached
+    - bundle:/usr/local/bundle
+    - history:/usr/local/hist
+  tmpfs:
+    - /tmp
+    - /app/tmp/pids
+
+services:
+  bash:
+    <<: *lib
+    command: bash
+    environment:
+      <<: *lib_environment
+
+volumes:
+  bundle:
+  history:
